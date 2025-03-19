@@ -1,5 +1,7 @@
 -module(bloomfi).
--moduledoc("""
+-include("bloomfi.hrl").
+
+?MODULEDOC("""
 Based on Scalable Bloom Filters, Paulo Sérgio Almeida, Carlos Baquero, Nuno
 Preguiça, David Hutchison. Information Processing Letters Volume 101, Issue 6,
 31 March 2007, Pages 255-261
@@ -50,7 +52,7 @@ enhanced double hashing for partitioned bloom filters).
 %% =============================================================================
 
 
--doc("""
+?DOC("""
 Returns a new bloom filter with fixed capacity based on the
 requested `Capacity' and error probability of `0.001'.
 The actual capacity will be equal or greater than the requested one.
@@ -61,7 +63,7 @@ new(Capacity) ->
     new(Capacity, 0.001).
 
 
--doc("""
+?DOC("""
 Returns a new bloom filter with fixed capacity `Capacity' and error
 probability of `P'.
 """).
@@ -78,7 +80,7 @@ is_number(Capacity0), Capacity0 > 0, is_float(P), P > 0, P < 1 ->
     new(size, Capacity, P).
 
 
--doc("""
+?DOC("""
 Returns a new bloom filter with fixed capacity `Capacity' and error
 probability of `P'.
 """).

@@ -18,14 +18,15 @@
 %%  limitations under the License.
 %% =============================================================================
 
-%% -----------------------------------------------------------------------------
-%% @doc A bit vector implemented using atomics.
-%% > Atomics are not tied to the current process and are automatically garbage
-%% collected when they are no longer referenced.
-%% @end
-%% -----------------------------------------------------------------------------
--module(bitvector).
 
+-module(bitvector).
+-include("bloomfi.hrl").
+
+?MODULEDOC("""
+A bit vector implemented using atomics.
+> Atomics are not tied to the current process and are automatically garbage
+collected when they are no longer referenced.
+""").
 -record(?MODULE, {
     size            ::  pos_integer(),
     atomics_ref     ::  atomics:atomics_ref()
@@ -49,10 +50,6 @@
 %% =============================================================================
 
 
-%% -----------------------------------------------------------------------------
-%% @doc
-%% @end
-%% -----------------------------------------------------------------------------
 new(Size) ->
     Words = (Size + 63) div 64,
     #?MODULE{
@@ -61,18 +58,16 @@ new(Size) ->
     }.
 
 
-%% -----------------------------------------------------------------------------
-%% @doc Returns the size of the bit vector.
-%% @end
-%% -----------------------------------------------------------------------------
+?DOC("""
+Returns the size of the bit vector.
+""").
 size(#?MODULE{size = Size}) ->
     Size.
 
 
-%% -----------------------------------------------------------------------------
-%% @doc Returns the value of the Nth bit.
-%% @end
-%% -----------------------------------------------------------------------------
+?DOC("""
+Returns the value of the Nth bit.
+""").
 get(Bix, #?MODULE{atomics_ref = Aref}) ->
     Wix = (Bix div 64) + 1,
     Mask = (1 bsl (Bix rem 64)),
@@ -83,49 +78,45 @@ get(Bix, #?MODULE{atomics_ref = Aref}) ->
     end.
 
 
-%% -----------------------------------------------------------------------------
-%% @doc Sets the value of the Nth bit to 1.
-%% @end
-%% -----------------------------------------------------------------------------
+?DOC("""
+Sets the value of the Nth bit to 1.
+""").
 set(Bix, #?MODULE{atomics_ref = Aref} = T) ->
     Mask = (1 bsl (Bix rem 64)),
     ok = update(Bix, Aref, fun(Word) -> Word bor Mask end),
     T.
 
 
-%% -----------------------------------------------------------------------------
-%% @doc Sets the value of the Nth bit to 0.
-%% @end
-%% -----------------------------------------------------------------------------
+?DOC("""
+Sets the value of the Nth bit to 0.
+""").
 clear(Bix, #?MODULE{atomics_ref = Aref} = T) ->
     Mask = bnot (1 bsl (Bix rem 64)),
     ok = update(Bix, Aref, fun(Word) -> Word band Mask end),
     T.
 
 
-%% -----------------------------------------------------------------------------
-%% @doc Flips the value of the Nth bit.
-%% @end
-%% -----------------------------------------------------------------------------
+?DOC("""
+Flips the value of the Nth bit.
+""").
 flip(Bix, #?MODULE{atomics_ref = Aref} = T) ->
     Mask = (1 bsl (Bix rem 64)),
     ok = update(Bix, Aref, fun(Word) -> Word bxor Mask end),
     T.
 
 
-%% -----------------------------------------------------------------------------
-%% @doc Prints the bit vector to the console
-%% @end
-%% -----------------------------------------------------------------------------
+?DOC("""
+Prints the bit vector to the console
+""").
 print(#?MODULE{size = Size} = BV) ->
     print(BV, Size - 1).
 
 
-%% -----------------------------------------------------------------------------
-%% @doc Returns a new bit vector that is the result of the logical or between
-%% the provided bit vectors.
-%% @end
-%% -----------------------------------------------------------------------------
+?DOC("""
+Returns a new bit vector that is the result of the logical or between
+the provided bit vectors.
+""").
+
 union(#?MODULE{size = Size} = A, #?MODULE{size = Size} = B) ->
     union(A, B, new(Size), Size - 1);
 
@@ -133,11 +124,11 @@ union(_, _) ->
     error(badarg).
 
 
-%% -----------------------------------------------------------------------------
-%% @doc Returns a new bit vector that is the result of the logical and between
-%% the provided bit vectors.
-%% @end
-%% -----------------------------------------------------------------------------
+?DOC("""
+Returns a new bit vector that is the result of the logical and between
+the provided bit vectors.
+""").
+
 intersection(#?MODULE{size = Size} = A, #?MODULE{size = Size} = B) ->
     intersection(A, B, new(Size), Size - 1);
 
